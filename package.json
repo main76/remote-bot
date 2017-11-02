@@ -1,0 +1,19 @@
+{
+  "name": "remote-bot",
+  "version": "1.0.0",
+  "description": "A Discord bot that can help you remote your machine.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "keywords": [
+    "discord bot"
+  ],
+  "author": "masteryu",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^11.2.1",
+    "shelljs": "^0.7.8",
+    "uws": "^8.14.1"
+  }
+}
