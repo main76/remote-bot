@@ -1,2 +1,6 @@
 node_modules/
 package-lock.json
+*.js
+*.js.map
+*.d.ts
+config.ts

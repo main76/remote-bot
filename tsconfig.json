@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "sourceMap": true,
+        "removeComments": true,
+        "declaration": true,
+        "noImplicitAny": false,
+        "noEmitOnError": false,
+        "typeRoots": [
+            "node_modules/@types"
+        ]
+    },
+    "exclude": [
+        "config.example.ts",
+        "node_modules/*"
+    ]
+}
