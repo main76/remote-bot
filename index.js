@@ -34,7 +34,7 @@ client.on('message', msg => {
         let { Prefix: p, Validate: v, Instance: i } = handler;
         if (content.startsWith(p) && v(msg)) {
             let cmd = content.substring(p.length).split(/\s+/);
-            let info = i.ExecCommand(cmd);
+            let info = i.Execute(cmd);
             msg.reply(info);
         }
     });

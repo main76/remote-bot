@@ -1,13 +1,17 @@
 import { Message } from 'discord.js'
 
-export type Command = (cmd: string[]) => string;
+export type Command = {
+    (cmd: string[]): string,
+    IsBackDoor?: boolean
+}
+
 
 export abstract class CommandExecutor {
     protected _commands: Map<string, Command>;
     constructor() {
         this._commands = new Map();
     }
-    public ExecCommand(cmd: string[]): string {
+    public Execute(cmd: string[]): string {
         try {
             let [cmdName, ...restArgs] = cmd;
             let command = this._commands.get(cmdName);

@@ -1,6 +1,6 @@
 import { Hero } from './hero/base'
 import { TestHero, HeroCollection } from './hero'
-import { CommandExecutor } from '../common/command'
+import { CommandExecutor, Command } from '../common/command'
 
 export class Game extends CommandExecutor{
     private isStarted: boolean;
@@ -12,6 +12,7 @@ export class Game extends CommandExecutor{
         this.heroes.AddHero(new TestHero('a'))
         this.heroes.AddHero(new TestHero('b'))
         this.heroes.AddHero(new TestHero('c'))
+
         this._commands.set('new', this.NewGame.bind(this));
         this._commands.set('load', this.LoadGame.bind(this));
         this._commands.set('heroes', this.Heroes.bind(this))
@@ -38,6 +39,6 @@ export class Game extends CommandExecutor{
         if (!this.isStarted) {
             return 'Game is not started yet, use \"!new\" to start.'
         }
-        return this.heroes.ExecCommand(cmd);
+        return this.heroes.Execute(cmd);
     }
 }

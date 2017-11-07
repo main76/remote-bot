@@ -56,9 +56,17 @@ export class HeroCollection extends CommandExecutor {
         // show specific hero
         else {
             response = 'Start showing details:\n';
-            cmd.forEach(indexString => {                
-                let i = Number(indexString);
-                response += `${i} - ${this.heroes[i].toString()}\n`;
+            let hero:Hero = null;
+            cmd.forEach(inputString => {
+                let i = Number(inputString);
+                if (Number.isInteger(i) && i >= 0 && i < this.heroes.length) {
+                    hero =  this.heroes[i]
+                }
+                else {
+                    let name = inputString.toLowerCase();
+                    hero = this.heroes.find(v => v.Name.toLowerCase().includes(name));
+                }
+                response += `${inputString} - ${hero.toString()}\n`;
             });
             response += 'End.'
         }
