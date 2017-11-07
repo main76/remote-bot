@@ -10,7 +10,7 @@ export class Feature extends CommandExecutor {
     }
 
     public async Update(): Promise<string> {
-        let response = '';
+        let response = 'running "git pull && tsc"';
         await exec('git pull && tsc', (err, stdout, stderr) => {
             if (err) {
                 response += err.message;
