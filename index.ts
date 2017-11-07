@@ -34,14 +34,14 @@ ready to serve ${client.users.size} users in ${client.guilds.size} servers. :hea
 // handle received messages.
 client.on('message', msg => {
     let content = msg.content;
-    handlers.forEach(handler => {
-        let {Prefix: p, Validate: v, Instance: i} = handler
+    for (let {Prefix: p, Validate: v, Instance: i} of handlers) {
         if (content.startsWith(p) && v(msg)) {
             let cmd = content.substring(p.length).split(/\s+/);
             let info = i.Execute(cmd);
             msg.reply(info);
+            return;
         }
-    });
+    }
 });
 
 client.login(config.token);
