@@ -1,17 +1,14 @@
 import { Hero } from './hero/base'
 import { TestHero, HeroCollection } from './hero'
-import { CommandExecutor, Command } from '../common/command'
+import { CommandExecutor, Command, TextBaseChannel } from '../common/command'
 
-export class Game extends CommandExecutor{
+export class Game extends CommandExecutor {
     private isStarted: boolean;
     private heroes: HeroCollection;
 
     constructor() {
         super();
         this.heroes = new HeroCollection();
-        this.heroes.AddHero(new TestHero('a'))
-        this.heroes.AddHero(new TestHero('b'))
-        this.heroes.AddHero(new TestHero('c'))
 
         this._commands.set('new', this.NewGame.bind(this));
         this._commands.set('load', this.LoadGame.bind(this));
@@ -23,6 +20,9 @@ export class Game extends CommandExecutor{
             return 'Game is already running.';
         }
         this.isStarted = true;
+        this.heroes.AddHero(new TestHero('a'))
+        this.heroes.AddHero(new TestHero('b'))
+        this.heroes.AddHero(new TestHero('c'))
         return 'Game started successfully.';
     }
 
@@ -35,10 +35,10 @@ export class Game extends CommandExecutor{
         return 'Not implemented.'
     }
 
-    public Heroes(cmd: string[]): string {
+    public Heroes(channel: TextBaseChannel, cmd: string[]): string {
         if (!this.isStarted) {
             return 'Game is not started yet, use \"!new\" to start.'
         }
-        return this.heroes.Execute(cmd);
+        this.heroes.Execute(channel, cmd);
     }
 }

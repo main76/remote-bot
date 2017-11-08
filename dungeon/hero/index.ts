@@ -1,6 +1,6 @@
 import { Hero } from './base'
 import { AllState } from '../stats/index';
-import { CommandExecutor } from '../../common/command';
+import { CommandExecutor, TextBaseChannel } from '../../common/command';
 import { Arrays } from '../../common/array';
 
 export class TestHero extends Hero {
@@ -8,7 +8,7 @@ export class TestHero extends Hero {
         super();
         this._name = 'Test' + name;
     }
-    
+
     public get CurrentState(): AllState {
         return this._selfState;
     }
@@ -30,47 +30,54 @@ export class HeroCollection extends CommandExecutor {
         this.heroes.push(hero);
     }
 
-    public SwapOrder(cmd: string[]): string {
-        let [pos1, pos2, sil='y'] = cmd;
+    public SwapOrder(channel: TextBaseChannel, cmd: string[]): string {
+        let [pos1, pos2, sil = 'y'] = cmd;
         let [p1, p2] = [Number(pos1), Number(pos2)];
 
         [this.heroes[p1], this.heroes[p2]] = [this.heroes[p2], this.heroes[p1]]
 
         let response = `Swap heroes' display order between ${this.heroes[p1].Name} and ${this.heroes[p2].Name}`;
         if (sil == 'y') {
-            return response;
+            channel.send(response);
+            return;
         }
-        return response += '\n' + this.Show();
+        return this.Show(channel);
     }
 
-    public Show(cmd: string[] = null): string {
-        let response;
+    public Show(channel: TextBaseChannel, cmd: string[] = null): string {
         // show order
         if (cmd == null || cmd.length == 0) {
-            response = '---------\n';
+            channel.send('---------');
             for (var i = 0; i < this.heroes.length; i++) {
-                response += `${i} - ${this.heroes[i].Name}\n`;
+                channel.send(`${i} - ${this.heroes[i].Name}\n`);
             }
-            response += '---------';
+            channel.send('---------');
         }
         // show specific hero
         else {
-            response = 'Start showing details:\n';
-            let hero:Hero = null;
-            cmd.forEach(inputString => {
-                let i = Number(inputString);
+            channel.send('Start showing details:');
+            let notfound: string[] = [];
+            for (let input of cmd) {
+                let i = Number(input);
+                let hero: Hero = null;
                 if (Number.isInteger(i) && i >= 0 && i < this.heroes.length) {
-                    hero =  this.heroes[i]
+                    hero = this.heroes[i]
                 }
                 else {
-                    let name = inputString.toLowerCase();
+                    let name = input.toLowerCase();
                     hero = this.heroes.find(v => v.Name.toLowerCase().includes(name));
                 }
-                response += `${inputString} - ${hero.toString()}\n`;
-            });
-            response += 'End.'
+                if (hero) {
+                    channel.send(`${input} - ${hero.toString()}`);
+                }
+                else {
+                    notfound.push(input);
+                }
+            }
+            if (notfound.length > 0) {
+                return `Following identifiers are not found: ${notfound.join(', ')}.`;
+            }
         }
-        return response;
     }
 
     public DismissHero(index: number) {

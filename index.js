@@ -30,10 +30,11 @@ ready to serve ${client.users.size} users in ${client.guilds.size} servers. :hea
 });
 client.on('message', msg => {
     let content = msg.content;
+    let channel = msg.channel;
     for (let { Prefix: p, Validate: v, Instance: i } of handlers) {
         if (content.startsWith(p) && v(msg)) {
             let cmd = content.substring(p.length).split(/\s+/);
-            let info = i.Execute(cmd);
+            let info = i.Execute(channel, cmd);
             msg.reply(info);
             return;
         }

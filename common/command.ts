@@ -1,27 +1,30 @@
-import { Message } from 'discord.js'
+import { Message, TextChannel, DMChannel, GroupDMChannel } from 'discord.js'
+
+export type TextBaseChannel = TextChannel | DMChannel | GroupDMChannel;
 
 export type Command = {
-    (cmd: string[]): string,
+    (channel?: TextBaseChannel, cmd?: string[]): string,
     IsBackDoor?: boolean
 }
-
 
 export abstract class CommandExecutor {
     protected _commands: Map<string, Command>;
     constructor() {
         this._commands = new Map();
     }
-    public Execute(cmd: string[]): string {
+    public Execute(channel: TextBaseChannel, cmd: string[]): void {
         try {
             let [cmdName, ...restArgs] = cmd;
             let command = this._commands.get(cmdName);
             if (!command) {
-                return `unexpected command ${cmdName}`;
+                channel.send(`unexpected command ${cmdName}`);
             }
-            return command(restArgs);
-            
+            let info = command(channel, restArgs);
+            if (info) {
+                channel.send(info);
+            }
         } catch (error) {
-            return (<Error>error).message;
+            channel.send((<Error>error).message);
         }
     }
     public get Commands(): IterableIterator<string> {

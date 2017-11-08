@@ -1,5 +1,6 @@
-import { CommandExecutor } from "../common/command";
+import { CommandExecutor, TextBaseChannel } from "../common/command";
 import { exec } from 'child_process'
+import * as path from 'path'
 
 export class Feature extends CommandExecutor {
 
@@ -9,27 +10,28 @@ export class Feature extends CommandExecutor {
         this._commands.set('reboot', this.Reboot.bind(this));
     }
 
-    public async Update(): Promise<string> {
-        let response = 'running "git pull && tsc"';
-        await exec('git pull && tsc', (err, stdout, stderr) => {
+    public Update(channel:TextBaseChannel): string {
+        const updatecmd = 'git pull && tsc';
+        exec(updatecmd, {
+            cwd: path.join(__dirname, '..')
+        }, (err, stdout, stderr) => {
             if (err) {
-                response += err.message;
+                channel.send(err.message);
             }
             else if (stdout) {
-                response += stdout;
+                channel.send(stdout);
             }
             else if (stderr) {
-                response += stderr;
+                channel.send(stderr);
             }
         });
-        return response;
+        return `Runing update("${updatecmd}") asynchronously.`;
     }
 
-    public Reboot(): string {
-        setTimeout(() => {
-            process.exit(1);            
-        }, 5000);
-        return 'Rebooting in 5s';
+    public Reboot(channel:TextBaseChannel): string {
+        channel.send('Bot is shuting down.');
+        process.exit(1);
+        return;
     }
 
 }
