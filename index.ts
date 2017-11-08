@@ -7,14 +7,14 @@ import { IHandler } from './common/command'
 const client = new Discord.Client();
 const handlers: IHandler[] = [
     {
-        Instance:  new Feature(),
+        Instance: new Feature(),
         Prefix: config.prefix.feature,
         Validate(msg: Discord.Message) {
             return msg.author.id == config.ownerId;
         }
     },
     {
-        Instance:  new Game(),
+        Instance: new Game(),
         Prefix: config.prefix.dungeon,
         Validate(msg: Discord.Message) {
             return msg.channel.id == config.channelId;
@@ -35,11 +35,11 @@ ready to serve ${client.users.size} users in ${client.guilds.size} servers. :hea
 client.on('message', msg => {
     let content = msg.content;
     let channel = msg.channel;
-    for (let {Prefix: p, Validate: v, Instance: i} of handlers) {
+    for (let { Prefix: p, Validate: v, Instance: i } of handlers) {
         if (content.startsWith(p) && v(msg)) {
             let cmd = content.substring(p.length).split(/\s+/);
-            let info = i.Execute(channel, cmd);
-            msg.reply(info);
+            i.Execute(channel, cmd);
+            msg.reply('Synchronous command finished.')
             return;
         }
     }

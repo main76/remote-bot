@@ -5,6 +5,6 @@ export const config = {
     ownerId: null,
     prefix: {
         feature: '!!',
-        game: '!'
+        dungeon: '!'
     }
 }
