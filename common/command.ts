@@ -18,6 +18,7 @@ export abstract class CommandExecutor {
             let command = this._commands.get(cmdName);
             if (!command) {
                 channel.send(`unexpected command ${cmdName}`);
+                return;
             }
             let info = command(channel, restArgs);
             if (info) {

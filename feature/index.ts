@@ -29,8 +29,10 @@ export class Feature extends CommandExecutor {
     }
 
     public Reboot(channel:TextBaseChannel): string {
-        channel.send('Bot is shuting down.');
-        process.exit(1);
+        channel.send('Bot will shut down in 5s.');
+        setTimeout(() => {
+            process.exit(1);
+        }, 5000);
         return;
     }
 
