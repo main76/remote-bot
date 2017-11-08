@@ -1,12 +1,13 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es6",
+        "target": "es2017",
         "sourceMap": true,
         "removeComments": true,
         "declaration": true,
         "noImplicitAny": false,
         "noEmitOnError": false,
+        "experimentalDecorators": true,
         "typeRoots": [
             "node_modules/@types"
         ]

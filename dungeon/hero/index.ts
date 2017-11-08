@@ -1,6 +1,6 @@
 import { Hero } from './base'
 import { AllState } from '../stats/index';
-import { CommandExecutor, TextBaseChannel } from '../../common/command';
+import { CommandExecutor, TextBaseChannel, Executable, Command } from '../../common/command';
 import { Arrays } from '../../common/array';
 
 export class TestHero extends Hero {
@@ -17,19 +17,22 @@ export class TestHero extends Hero {
 export class HeroCollection extends CommandExecutor {
     private heroes: Hero[];
     private team: Hero[];
+    protected static commands: Map<string, Command>;
 
     constructor() {
         super();
         this.heroes = [];
         this.team = new Array(4);
-        this._commands.set('swap', this.SwapOrder.bind(this));
-        this._commands.set('show', this.Show.bind(this));
+        // this._commands.set('show', this.Show.bind(this));
     }
 
     public AddHero(hero: Hero) {
         this.heroes.push(hero);
     }
 
+    @Executable('swap', "Swap two heroes' display order.", [
+        ["(pos1:int) (pos2:int) [sil='y']", "if sil is not 'y' run 'show' after the swap."]
+    ])
     public SwapOrder(channel: TextBaseChannel, cmd: string[]): string {
         let [pos1, pos2, sil = 'y'] = cmd;
         let [p1, p2] = [Number(pos1), Number(pos2)];
@@ -37,12 +40,16 @@ export class HeroCollection extends CommandExecutor {
         [this.heroes[p1], this.heroes[p2]] = [this.heroes[p2], this.heroes[p1]]
 
         channel.send(`Swap heroes' display order between ${this.heroes[p1].Name} and ${this.heroes[p2].Name}`);
-        if (sil == 'y') {
+        if (sil.toLowerCase() == 'y') {
             return;
         }
         return this.Show(channel);
     }
 
+    @Executable('show', "Show heroes' information.", [
+        ["parameterless", "show all heroes' index and name."],
+        ["...(id|name)", "show hero's detail with specific id or name."]
+    ])
     public Show(channel: TextBaseChannel, cmd: string[] = null): string {
         // show order
         if (cmd == null || cmd.length == 0) {
@@ -57,15 +64,7 @@ export class HeroCollection extends CommandExecutor {
             channel.send('Start showing details:');
             let notfound: string[] = [];
             for (let input of cmd) {
-                let i = Number(input);
-                let hero: Hero = null;
-                if (Number.isInteger(i) && i >= 0 && i < this.heroes.length) {
-                    hero = this.heroes[i]
-                }
-                else {
-                    let name = input.toLowerCase();
-                    hero = this.heroes.find(v => v.Name.toLowerCase().includes(name));
-                }
+                let hero = this.GetHero(this.heroes, input);
                 if (hero) {
                     channel.send(`${input} - ${hero.toString()}`);
                 }
@@ -85,5 +84,18 @@ export class HeroCollection extends CommandExecutor {
         if (i != -1) {
             delete this.team[i];
         }
+    }
+
+    private GetHero(heroes: Hero[], input: string): Hero {
+        let i = Number(input);
+        let hero: Hero = null;
+        if (Number.isInteger(i) && i >= 0 && i < this.heroes.length) {
+            hero = this.heroes[i]
+        }
+        else {
+            let name = input.toLowerCase();
+            hero = this.heroes.find(v => v.Name.toLowerCase().includes(name));
+        }
+        return hero;
     }
 }
