@@ -34,8 +34,8 @@ client.on('message', msg => {
     for (let { Prefix: p, Validate: v, Instance: i } of handlers) {
         if (content.startsWith(p) && v(msg)) {
             let cmd = content.substring(p.length).split(/\s+/);
-            let info = i.Execute(channel, cmd);
-            msg.reply(info);
+            i.Execute(channel, cmd);
+            msg.reply('Synchronous command finished.');
             return;
         }
     }

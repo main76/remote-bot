@@ -36,9 +36,8 @@ export class HeroCollection extends CommandExecutor {
 
         [this.heroes[p1], this.heroes[p2]] = [this.heroes[p2], this.heroes[p1]]
 
-        let response = `Swap heroes' display order between ${this.heroes[p1].Name} and ${this.heroes[p2].Name}`;
+        channel.send(`Swap heroes' display order between ${this.heroes[p1].Name} and ${this.heroes[p2].Name}`);
         if (sil == 'y') {
-            channel.send(response);
             return;
         }
         return this.Show(channel);
@@ -47,11 +46,11 @@ export class HeroCollection extends CommandExecutor {
     public Show(channel: TextBaseChannel, cmd: string[] = null): string {
         // show order
         if (cmd == null || cmd.length == 0) {
-            channel.send('---------');
+            let info = '';
             for (var i = 0; i < this.heroes.length; i++) {
-                channel.send(`${i} - ${this.heroes[i].Name}\n`);
+                info += `${i} - ${this.heroes[i].Name}\n`;
             }
-            channel.send('---------');
+            channel.send(info);
         }
         // show specific hero
         else {
