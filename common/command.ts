@@ -20,16 +20,11 @@ export interface IHandler {
 
 export abstract class CommandExecutor {
     protected _commands: Map<string, Command>;
-    protected static commands: Map<string, Command>;
-
-    constructor() {
-        this._commands = new Map();
-    }
 
     public Execute(channel: TextBaseChannel, cmd: string[]): void {
         try {
             let [cmdName, ...restArgs] = cmd;
-            let command = this._commands.get(cmdName);
+            let command: Command = this._commands.get(cmdName).bind(this);
             if (!command) {
                 channel.send(`unexpected command ${cmdName}`);
                 return;
@@ -48,38 +43,57 @@ export abstract class CommandExecutor {
     }
 
     @Executable('help', "Print this message.")
-    protected Help(channel: TextBaseChannel): string {
+    public Help(channel: TextBaseChannel): string {
         let response = '======Help======\n';
-        for (let cmdName in this._commands.keys()) {
-            let cmd = this._commands.get(cmdName);
-            response += `${cmdName.padEnd(10)}: ${cmd.Description}\n`;
+        for (let [alias, cmd] of this._commands.entries()) {
+            let cmd = this._commands.get(alias);
+            response += `${alias.padEnd(10)}: ${cmd.Description}\n`;
             if (cmd.Usages) {
                 for (let [syntax, purpose] of cmd.Usages) {
                     response += ` ·${syntax.padEnd(8)}: ${purpose}\n`;
                 }
             }
         }
-        response += '======Help======'
+        response += '======Help======';
         channel.send(response, { code: true });
         return
-    }
-
-    protected InstallCommand(command: Command): void {
-        this._commands.set(command.Alias, command);
     }
 }
 
 export function Executable(alias: string, desc: string, usages: CommandUsage = null, backdoor = false) {
-    return function (ce: any, pkey: string, descriptor: PropertyDescriptor) {
-        let cmd = ce[pkey] as Command;
-        console.log(ce);
+    return function (target: any, pkey: string, descriptor: PropertyDescriptor) {
+        let className: string = target.constructor.name;
+        let cmd: Command = descriptor.value;
         cmd.Alias = alias;
         cmd.BackDoor = backdoor;
         cmd.Description = desc;
         cmd.Usages = usages;
-        if (!ce.commands) {
-            ce.commands = new Map();
-        }
-        ce.commands.set(alias, cmd);
+
+        target.shadowCollections = target.shadowCollections || {}
+        let shadowCollections = target.shadowCollections;
+
+        shadowCollections[className] = shadowCollections[className] || new Map();
+        let collection: Map<string, Command> = shadowCollections[className];
+
+        collection.set(alias, cmd);
     };
+}
+
+export function SetupCommands<T extends { new(...args: any[]): {} }>(ctor: T) {
+    let all: [string, Function][] = [];
+    function* getClassNames(_ctor: T) {
+        while (_ctor && _ctor.name) {
+            yield _ctor.name;
+            _ctor = Object.getPrototypeOf(_ctor);
+        }
+    }
+    for (let className of getClassNames(ctor)) {
+        let current: Map<string, Function> = ctor.prototype.shadowCollections[className];
+        all.push(...current);
+    }
+    all.sort(([a,], [b,]) => a < b ? -1 : (a > b ? 1 : 0));
+    delete ctor.prototype.shadowCollections;
+    return class extends ctor {
+        _commands = new Map(all);
+    }
 }

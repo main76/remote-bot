@@ -1,16 +1,11 @@
-import { CommandExecutor, TextBaseChannel } from "../common/command";
+import { CommandExecutor, TextBaseChannel, Executable, SetupCommands } from "../common/command";
 import { exec } from 'child_process'
 import * as path from 'path'
 
+@SetupCommands
 export class Feature extends CommandExecutor {
-
-    constructor() {
-        super();
-        this._commands.set('update', this.Update.bind(this));
-        this._commands.set('reboot', this.Reboot.bind(this));
-    }
-
-    public Update(channel:TextBaseChannel): string {
+    @Executable('update', "Update this bot itself.")
+    public Update(channel: TextBaseChannel): string {
         const updatecmd = 'git pull && tsc';
         exec(updatecmd, {
             cwd: path.join(__dirname, '..')
@@ -28,7 +23,8 @@ export class Feature extends CommandExecutor {
         return `Runing update("${updatecmd}") asynchronously.`;
     }
 
-    public Reboot(channel:TextBaseChannel): string {
+    @Executable('reboot', "reboot this bot.")
+    public Reboot(channel: TextBaseChannel): string {
         channel.send('Bot will shut down in 5s.');
         setTimeout(() => {
             process.exit(1);
