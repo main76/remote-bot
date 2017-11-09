@@ -2,7 +2,7 @@ import { Message, TextChannel, DMChannel, GroupDMChannel } from 'discord.js'
 
 export type TextBaseChannel = TextChannel | DMChannel | GroupDMChannel;
 
-export type CommandUsage = [string, string][]
+export type CommandUsage = [string, string][];
 
 export type Command = {
     (channel?: TextBaseChannel, cmd?: string[]): string,
@@ -24,12 +24,12 @@ export abstract class CommandExecutor {
     public Execute(channel: TextBaseChannel, cmd: string[]): void {
         try {
             let [cmdName, ...restArgs] = cmd;
-            let command: Command = this._commands.get(cmdName).bind(this);
+            let command: Command = this._commands.get(cmdName);
             if (!command) {
                 channel.send(`unexpected command ${cmdName}`);
                 return;
             }
-            let info = command(channel, restArgs);
+            let info = command.bind(this)(channel, restArgs);
             if (info) {
                 channel.send(info);
             }
@@ -44,17 +44,17 @@ export abstract class CommandExecutor {
 
     @Executable('help', "Print this message.")
     protected Help(channel: TextBaseChannel): string {
-        let response = '===============Help=============\n';
-        for (let cmdName in this._commands.keys()) {
-            let cmd = this._commands.get(cmdName);
-            response += `${cmdName.padEnd(10)}: ${cmd.Description}\n`;
+        let response = '===============Help===============\n';
+        for (let [alias, cmd] of this._commands.entries()) {
+            let cmd = this._commands.get(alias);
+            response += `${alias.padEnd(10)}: ${cmd.Description}\n`;
             if (cmd.Usages) {
                 for (let [syntax, purpose] of cmd.Usages) {
                     response += ` ·${syntax.padEnd(8)}: ${purpose}\n`;
                 }
             }
         }
-        response += '===============Help============='
+        response += '===============Help===============';
         channel.send(response, { code: true });
         return
     }

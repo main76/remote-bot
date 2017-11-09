@@ -63,9 +63,9 @@ export class HeroCollection extends CommandExecutor {
             channel.send('Start showing details:');
             let notfound: string[] = [];
             for (let input of cmd) {
-                let hero = this.GetHero(this.heroes, input);
+                let [hero, i] = this.GetHero(this.heroes, input);
                 if (hero) {
-                    channel.send(`${input} - ${hero.toString()}`);
+                    channel.send(`${i} - ${hero.toString()}`, { code: true });
                 }
                 else {
                     notfound.push(input);
@@ -85,16 +85,16 @@ export class HeroCollection extends CommandExecutor {
         }
     }
 
-    private GetHero(heroes: Hero[], input: string): Hero {
+    private GetHero(heroes: Hero[], input: string): [Hero, number] {
         let i = Number(input);
         let hero: Hero = null;
         if (Number.isInteger(i) && i >= 0 && i < this.heroes.length) {
-            hero = this.heroes[i]
+            hero = this.heroes[i];
         }
         else {
             let name = input.toLowerCase();
             hero = this.heroes.find(v => v.Name.toLowerCase().includes(name));
         }
-        return hero;
+        return [hero, i];
     }
 }

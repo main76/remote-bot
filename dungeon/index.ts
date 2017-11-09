@@ -18,9 +18,9 @@ export class Game extends CommandExecutor {
             return 'Game is already running.';
         }
         this.isStarted = true;
-        this.heroes.AddHero(new TestHero('a'))
-        this.heroes.AddHero(new TestHero('b'))
-        this.heroes.AddHero(new TestHero('c'))
+        this.heroes.AddHero(new TestHero('a'));
+        this.heroes.AddHero(new TestHero('b'));
+        this.heroes.AddHero(new TestHero('c'));
         return 'Game started successfully.';
     }
 
@@ -34,7 +34,7 @@ export class Game extends CommandExecutor {
         return 'Not implemented.'
     }
 
-    @Executable('heroes', "sub-command, use 'heroes help' to see further help.")
+    @Executable('heroes', "Sub-command, use 'heroes help' to see further help.")
     public Heroes(channel: TextBaseChannel, cmd: string[]): string {
         if (!this.isStarted) {
             return "Game is not started yet, use '!new' to start."

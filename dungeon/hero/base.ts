@@ -1,13 +1,11 @@
 import { EquipmentsBox } from '../item'
-import { AllState, DefaultDebuffState } from '../stats/index';
+import { Unit } from '../common/base';
 
-export abstract class Hero {
-    protected _name: string;
+export abstract class Hero extends Unit {
     protected _equipments: EquipmentsBox;
-    protected _selfState: AllState;
 
     constructor() {
-        this._selfState = new AllState();
+        super();
         this._selfState.Health.current = 100;
         this._selfState.Health.total = 100;
         this._selfState.Attack = 10;
@@ -21,17 +19,11 @@ export abstract class Hero {
         return this._equipments;
     }
 
-    public get Name(): string {
-        return this._name;
-    }
-
-    public abstract get CurrentState(): AllState;
-
     public toString(): string {
         return `Hero - ${this._name}:
 -----------
 ${this.CurrentState.toString()}
------------`
+-----------`;
     }
 
 }
