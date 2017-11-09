@@ -49,7 +49,7 @@ export abstract class CommandExecutor {
 
     @Executable('help', "Print this message.")
     protected Help(channel: TextBaseChannel): string {
-        let response = '======Help======\n';
+        let response = '===============Help=============\n';
         for (let cmdName in this._commands.keys()) {
             let cmd = this._commands.get(cmdName);
             response += `${cmdName.padEnd(10)}: ${cmd.Description}\n`;
@@ -59,7 +59,7 @@ export abstract class CommandExecutor {
                 }
             }
         }
-        response += '======Help======'
+        response += '===============Help============='
         channel.send(response, { code: true });
         return
     }
