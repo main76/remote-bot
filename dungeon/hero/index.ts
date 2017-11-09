@@ -1,6 +1,6 @@
 import { Hero } from './base'
 import { AllState } from '../stats/index';
-import { CommandExecutor, TextBaseChannel, Executable, Command } from '../../common/command';
+import { CommandExecutor, TextBaseChannel, Executable, Command, SetupCommands } from '../../common/command';
 import { Arrays } from '../../common/array';
 
 export class TestHero extends Hero {
@@ -14,16 +14,15 @@ export class TestHero extends Hero {
     }
 }
 
+@SetupCommands
 export class HeroCollection extends CommandExecutor {
     private heroes: Hero[];
     private team: Hero[];
-    protected static commands: Map<string, Command>;
 
     constructor() {
         super();
         this.heroes = [];
         this.team = new Array(4);
-        // this._commands.set('show', this.Show.bind(this));
     }
 
     public AddHero(hero: Hero) {

@@ -11,11 +11,10 @@ typescript v2.x
 pm2
 
 ## install & build
-npm install
-tsc
+```npm install && tsc```
 
 ## run
-node index.js
+```node index.js```
 
 ## debug
 vscode f5
