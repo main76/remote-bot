@@ -1,26 +1,8 @@
 import * as Discord from 'discord.js'
-import { Game } from './dungeon'
-import { Feature } from './feature'
 import { config } from './config'
-import { IHandler } from './common/command'
+import { handlers } from './handler'
 
 const client = new Discord.Client();
-const handlers: IHandler[] = [
-    {
-        Instance: new Feature(),
-        Prefix: config.prefix.feature,
-        Validate(msg: Discord.Message) {
-            return msg.author.id == config.ownerId;
-        }
-    },
-    {
-        Instance: new Game(),
-        Prefix: config.prefix.dungeon,
-        Validate(msg: Discord.Message) {
-            return msg.channel.id == config.channelId;
-        }
-    }
-]
 
 // send message that indicate the bot is ready.
 client.on('ready', () => {
@@ -39,7 +21,7 @@ client.on('message', msg => {
         if (content.startsWith(p) && v(msg)) {
             let cmd = content.substring(p.length).split(/\s+/);
             i.Execute(channel, cmd);
-            msg.reply('Synchronous command finished.')
+            msg.reply('Synchronous command finished.');
             return;
         }
     }

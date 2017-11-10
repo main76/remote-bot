@@ -1,26 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Discord = require("discord.js");
-const dungeon_1 = require("./dungeon");
-const feature_1 = require("./feature");
 const config_1 = require("./config");
+const handler_1 = require("./handler");
 const client = new Discord.Client();
-const handlers = [
-    {
-        Instance: new feature_1.Feature(),
-        Prefix: config_1.config.prefix.feature,
-        Validate(msg) {
-            return msg.author.id == config_1.config.ownerId;
-        }
-    },
-    {
-        Instance: new dungeon_1.Game(),
-        Prefix: config_1.config.prefix.dungeon,
-        Validate(msg) {
-            return msg.channel.id == config_1.config.channelId;
-        }
-    }
-];
 client.on('ready', () => {
     let gameChannel = client.channels.get(config_1.config.channelId);
     let readyMessage = `Logged in as ${client.user.tag}!
@@ -31,7 +14,7 @@ ready to serve ${client.users.size} users in ${client.guilds.size} servers. :hea
 client.on('message', msg => {
     let content = msg.content;
     let channel = msg.channel;
-    for (let { Prefix: p, Validate: v, Instance: i } of handlers) {
+    for (let { Prefix: p, Validate: v, Instance: i } of handler_1.handlers) {
         if (content.startsWith(p) && v(msg)) {
             let cmd = content.substring(p.length).split(/\s+/);
             i.Execute(channel, cmd);
