@@ -20,7 +20,8 @@
             "program": "${workspaceFolder}\\test.js",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
-            ]
+            ],
+            "console": "integratedTerminal"
         }
     ]
 }
