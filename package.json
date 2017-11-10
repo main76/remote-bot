@@ -1,6 +1,6 @@
 {
   "name": "remote-bot",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A Discord bot that can help you remote your machine.",
   "main": "index.js",
   "scripts": {
