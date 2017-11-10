@@ -14,7 +14,10 @@ pm2
 ```npm install && tsc```
 
 ## run
-```node index.js```
+```npm start``` or ```node index.js```
+
+## local test
+```npm test``` or ```node test.js```
 
 ## debug
 vscode f5

@@ -7,8 +7,17 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Log-in bot",
             "program": "${workspaceFolder}\\index.js",
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Local test",
+            "program": "${workspaceFolder}\\test.js",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]

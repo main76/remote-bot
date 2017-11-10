@@ -14,3 +14,12 @@ export abstract class Unit {
 
     public abstract get CurrentState(): AllState;
 }
+
+export abstract class Skill {
+    protected _name: string;
+
+    public get Name(): string {
+        return this._name;
+    }
+
+}
