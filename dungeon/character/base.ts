@@ -1,4 +1,5 @@
 import { Card } from "../skill/card/base";
+import { Nameable } from "../../common/interfaces";
 
 export class Character {
     protected _deck: Card[];
@@ -15,11 +16,10 @@ export class Character {
     }
 }
 
-export interface CharacterDescriptor {
-    readonly Name: string;
+export interface CharacterDescriptor extends Nameable {
     readonly Background: string;
     readonly OriginDeck: Card[];
-    readonly OriginState: { Gold: number, Health: number }
+    readonly OriginState: { Gold: number, Health: number };
 }
 
 export function ShowDescription(charDes: CharacterDescriptor): string {
