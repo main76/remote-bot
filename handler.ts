@@ -15,7 +15,8 @@ export const handlers: IHandler[] = [
         Instance: new Terminal(),
         Prefix: config.prefix.terminal,
         Validate(msg: Discord.Message) {
-            return msg.author.id == config.ownerId;
+            return msg.author.id == config.ownerId
+                   || config.collaboratorId.includes(msg.author.id);
         }
     }
 ]
