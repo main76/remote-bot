@@ -23,7 +23,7 @@ export class Feature extends CommandExecutor {
         return `Runing update("${updatecmd}") asynchronously.`;
     }
 
-    @Executable('reboot', "reboot this bot.")
+    @Executable('reboot', "Reboot this bot.")
     public Reboot(channel: TextBaseChannel): string {
         channel.send('Bot will shut down in 5s.');
         setTimeout(() => {
