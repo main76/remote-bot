@@ -31,5 +31,45 @@ export class Feature extends CommandExecutor {
         }, 5000);
         return;
     }
+}
 
+@SetupCommands
+export class Terminal extends CommandExecutor {
+    private _cwd: string;
+
+    constructor() {
+        super();
+        this._cwd = process.cwd();
+    }
+
+    @Executable('cd', "Change working directory.")
+    public ChangeDirectory(channel: TextBaseChannel, cmd: string[]): string {
+        let [dir,] = cmd;
+        process.chdir(dir);
+        this._cwd = process.cwd();
+        return `Current working directory: "${this._cwd }".`;
+    }
+
+    @Executable('run', "Run commands.")
+    public RunCmd(channel: TextBaseChannel, cmd: string[]): string {
+        const _cmd = cmd.join(' ');
+        exec(_cmd, {
+            cwd: this._cwd
+        }, (err, stdout, stderr) => {
+            if (err) {
+                channel.send(err.message);
+            }
+            else if (stdout) {
+                if (stdout.length > 1e5) {
+                    stdout = stdout.substring(0, 1e5);
+                }
+                channel.send(stdout);
+            }
+            else if (stderr) {
+                channel.send(stderr);
+            }
+            channel.send('Asynchronous command finished.');
+        });
+        return `Runing "${_cmd}" asynchronously.`;
+    }
 }

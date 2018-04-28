@@ -1,6 +1,5 @@
 import * as Discord from 'discord.js'
-import { Game } from './dungeon'
-import { Feature } from './feature'
+import { Feature, Terminal } from './feature'
 import { config } from './config'
 import { IHandler } from './common/command'
 
@@ -13,10 +12,10 @@ export const handlers: IHandler[] = [
         }
     },
     {
-        Instance: new Game(),
-        Prefix: config.prefix.dungeon,
+        Instance: new Terminal(),
+        Prefix: config.prefix.terminal,
         Validate(msg: Discord.Message) {
-            return msg.channel.id == config.channelId;
+            return msg.author.id == config.ownerId;
         }
     }
 ]
