@@ -6,6 +6,6 @@ export const config = {
     collaboratorId: [],
     prefix: {
         feature: '!!',
-        dungeon: '!'
+        terminal: '!'
     }
 }
