@@ -44,10 +44,18 @@ export class Terminal extends CommandExecutor {
 
     @Executable('cd', "Change working directory.")
     public ChangeDirectory(channel: TextBaseChannel, cmd: string[]): string {
-        let [dir,] = cmd;
+        const [dir,] = cmd;
         process.chdir(dir);
         this._cwd = process.cwd();
         return `Current working directory: "${this._cwd }".`;
+    }
+
+    @Executable('file', "Export file.")
+    public ExportFile(channel: TextBaseChannel, cmd: string[]): string {
+        let [fn,] = cmd;
+        fn = path.join(this._cwd, fn);
+        channel.send(fn, { file: fn });
+        return `Uploading file "${fn}" asynchronously.`;
     }
 
     @Executable('run', "Run commands.")
