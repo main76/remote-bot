@@ -19,6 +19,7 @@ export class Feature extends CommandExecutor {
             else if (stderr) {
                 channel.send(stderr);
             }
+            channel.send('Asynchronous command finished.');
         });
         return `Runing update("${updatecmd}") asynchronously.`;
     }
