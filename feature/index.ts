@@ -54,8 +54,9 @@ export class Terminal extends CommandExecutor {
     @Executable('file', "Export file.")
     public ExportFile(channel: TextBaseChannel, cmd: string[]): string {
         let [fn,] = cmd;
+        const bn = path.basename(fn);
         fn = path.join(this._cwd, fn);
-        channel.send(fn, { file: fn });
+        channel.send(fn, { file: { attachment: fn, name: bn } });
         return `Uploading file "${fn}" asynchronously.`;
     }
 
