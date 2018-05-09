@@ -38,10 +38,15 @@ export class Feature extends CommandExecutor {
 @SetupCommands
 export class Terminal extends CommandExecutor {
     private _cwd: string;
+    private readonly _logRoot: string;
 
     constructor() {
         super();
         this._cwd = process.cwd();
+        this._logRoot = path.join(__dirname, '..', 'job_logs');
+        if (fs.existsSync(this._logRoot)) {
+            fs.mkdirSync(this._logRoot);
+        }
     }
 
     @Executable('cd', "Change working directory.")
@@ -72,37 +77,33 @@ export class Terminal extends CommandExecutor {
                 channel.send(err.message);
             }
             if (stdout) {
-                TrySendContent(channel, stdout, timestamp, 'stdout');
+                this.TrySendContent(channel, stdout, timestamp, 'stdout');
             }
             if (stderr) {
-                TrySendContent(channel, stderr, timestamp, 'stderr');
+                this.TrySendContent(channel, stderr, timestamp, 'stderr');
             }
             channel.send('Asynchronous command finished.');
         });
         return `Runing "${_cmd}" asynchronously.`;
     }
-}
 
-let log_root = path.join(__dirname, '..', 'job_logs');
-if (fs.existsSync(log_root)) {
-    fs.mkdirSync(log_root);
-}
-const DISCORD_BODY_LIMIT = 2000;
-
-function TrySendContent(channel: TextBaseChannel, content: string, timestamp: number, suffix: string) {
-    if (content.length > DISCORD_BODY_LIMIT) {
-        const bn = `${timestamp}.${suffix}`;
-        const log = path.join(log_root, bn);
-        fs.writeFile(log, content, (err) => {
-            if (err) {
-                channel.send(err.message);
-                return;
-            }
-            channel.send(`Content of ${suffix} is too large, attach as file.`, { 
-                file: { attachment: log, name: bn } 
+    private TrySendContent(channel: TextBaseChannel, content: string, timestamp: number, suffix: string) {
+        if (content.length > DISCORD_BODY_LIMIT) {
+            const bn = `${timestamp}.${suffix}`;
+            const log = path.join(this._logRoot, bn);
+            fs.writeFile(log, content, (err) => {
+                if (err) {
+                    channel.send(err.message);
+                    return;
+                }
+                channel.send(`Content of ${suffix} is too large, attach as file.`, { 
+                    file: { attachment: log, name: bn } 
+                });
             });
-        });
-    } else {
-        channel.send(content);
+        } else {
+            channel.send(content);
+        }
     }
 }
+
+const DISCORD_BODY_LIMIT = 2000;
