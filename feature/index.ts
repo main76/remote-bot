@@ -1,6 +1,7 @@
 import { CommandExecutor, TextBaseChannel, Executable, SetupCommands } from "../common/command";
-import { exec } from 'child_process'
-import * as path from 'path'
+import { exec } from 'child_process';
+import * as path from 'path';
+import * as fs from 'fs';
 
 @SetupCommands
 export class Feature extends CommandExecutor {
@@ -66,20 +67,39 @@ export class Terminal extends CommandExecutor {
         exec(_cmd, {
             cwd: this._cwd
         }, (err, stdout, stderr) => {
+            const timestamp = Date.now();
             if (err) {
                 channel.send(err.message);
             }
-            else if (stdout) {
-                if (stdout.length > 1e5) {
-                    stdout = stdout.substring(0, 1e5);
-                }
-                channel.send(stdout);
+            if (stdout) {
+                TrySendContent(channel, stdout, timestamp, 'stdout');
             }
-            else if (stderr) {
-                channel.send(stderr);
+            if (stderr) {
+                TrySendContent(channel, stderr, timestamp, 'stderr');
             }
             channel.send('Asynchronous command finished.');
         });
         return `Runing "${_cmd}" asynchronously.`;
+    }
+}
+
+let log_root = path.join(__dirname, 'job_logs');
+const DISCORD_BODY_LIMIT = 2000;
+
+function TrySendContent(channel: TextBaseChannel, content: string, timestamp: number, suffix: string) {
+    if (content.length > DISCORD_BODY_LIMIT) {
+        const bn = `${timestamp}.${suffix}`;
+        const log = path.join(log_root, bn);
+        fs.writeFile(log, content, (err) => {
+            if (err) {
+                channel.send(err.message);
+                return;
+            }
+            channel.send(`Content of ${suffix} is too large, attach as file.`, { 
+                file: { attachment: log, name: bn } 
+            });
+        });
+    } else {
+        channel.send(content);
     }
 }

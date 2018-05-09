@@ -1,4 +1,5 @@
 node_modules/
+job_logs/
 package-lock.json
 *.js
 *.js.map
