@@ -83,7 +83,10 @@ export class Terminal extends CommandExecutor {
     }
 }
 
-let log_root = path.join(__dirname, 'job_logs');
+let log_root = path.join(__dirname, '..', 'job_logs');
+if (fs.existsSync(log_root)) {
+    fs.mkdirSync(log_root);
+}
 const DISCORD_BODY_LIMIT = 2000;
 
 function TrySendContent(channel: TextBaseChannel, content: string, timestamp: number, suffix: string) {
