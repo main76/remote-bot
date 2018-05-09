@@ -7,7 +7,7 @@ import * as fs from 'fs';
 export class Feature extends CommandExecutor {
     @Executable('update', "Update this bot itself.")
     public Update(channel: TextBaseChannel): string {
-        const updatecmd = 'git pull && tsc';
+        const updatecmd = 'git pull && npm install && tsc';
         exec(updatecmd, {
             cwd: path.join(__dirname, '..')
         }, (err, stdout, stderr) => {
