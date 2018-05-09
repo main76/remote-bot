@@ -44,7 +44,7 @@ export class Terminal extends CommandExecutor {
         super();
         this._cwd = process.cwd();
         this._logRoot = path.join(__dirname, '..', 'job_logs');
-        if (fs.existsSync(this._logRoot)) {
+        if (!fs.existsSync(this._logRoot)) {
             fs.mkdirSync(this._logRoot);
         }
     }
